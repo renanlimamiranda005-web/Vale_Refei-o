@@ -1,366 +1,311 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <base target="_top">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BIG - Teclogica</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #333;
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-    
-    /* Tela de carregamento */
-    .loading-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #ff7b00, #ff5500);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease-out;
-    }
-    
-    .loading-screen.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-    
-    .logo-container {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    
-    .logo-big {
-      font-size: 5rem;
-      font-weight: 900;
-      color: white;
-      text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
-      letter-spacing: 2px;
-      margin-bottom: 10px;
-    }
-    
-    .logo-teclogica {
-      font-size: 1.8rem;
-      font-weight: 300;
-      color: white;
-      letter-spacing: 5px;
-      text-transform: uppercase;
-    }
-    
-    .loading-animation {
-      width: 80px;
-      height: 80px;
-      position: relative;
-    }
-    
-    .loading-circle {
-      width: 100%;
-      height: 100%;
-      border: 5px solid rgba(255, 255, 255, 0.3);
-      border-top: 5px solid white;
-      border-radius: 50%;
-      animation: spin 1.2s linear infinite;
-    }
-    
-    .loading-dots {
-      display: flex;
-      gap: 8px;
-      margin-top: 20px;
-    }
-    
-    .loading-dot {
-      width: 12px;
-      height: 12px;
-      background-color: white;
-      border-radius: 50%;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-    
-    .loading-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-    
-    .loading-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.2); opacity: 0.7; }
-    }
-    
-    /* Conteúdo principal */
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 30px 20px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    
-    .container.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    
-    .header h1 {
-      color: white;
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    .header p {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 1.1rem;
-    }
-    
-    .status-container {
-      background-color: white;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      margin-bottom: 25px;
-      border-left: 5px solid #ff7b00;
-    }
-    
-    .status-label {
-      font-weight: 600;
-      color: #555;
-      font-size: 1.1rem;
-    }
-    
-    #status {
-      font-weight: 700;
-      padding: 8px 16px;
-      border-radius: 25px;
-      background-color: #f0f0f0;
-      margin-left: 10px;
-      font-size: 1rem;
-    }
-    
-    #status.connected {
-      background-color: #e8f5e9;
-      color: #2e7d32;
-    }
-    
-    #status.error {
-      background-color: #ffebee;
-      color: #c62828;
-    }
-    
-    .content-card {
-      background-color: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      margin-bottom: 25px;
-    }
-    
-    .content-card h2 {
-      color: #ff7b00;
-      margin-bottom: 20px;
-      font-size: 1.8rem;
-      border-bottom: 2px solid #f0f0f0;
-      padding-bottom: 10px;
-    }
-    
-    .content-card p {
-      margin-bottom: 15px;
-      font-size: 1.05rem;
-      line-height: 1.7;
-    }
-    
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 25px;
-    }
-    
-    .info-item {
-      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-      padding: 20px;
-      border-radius: 10px;
-      border-left: 4px solid #ff7b00;
-    }
-    
-    .info-item h3 {
-      color: #495057;
-      margin-bottom: 10px;
-      font-size: 1.2rem;
-    }
-    
-    .info-item p {
-      color: #6c757d;
-      margin: 0;
-    }
-    
-    .footer {
-      text-align: center;
-      margin-top: 40px;
-      color: white;
-      opacity: 0.8;
-    }
-
-    /* Responsividade */
-    @media (max-width: 768px) {
-      .logo-big {
-        font-size: 3.5rem;
-      }
-      
-      .logo-teclogica {
-        font-size: 1.4rem;
-      }
-      
-      .header h1 {
-        font-size: 2rem;
-      }
-      
-      .container {
-        padding: 20px 15px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Compra - Sistema de Reservas</title>
+    <meta name="description" content="Sistema de gestão de reservas Big Compra">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF6B00">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Partículas de fundo */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        /* Logo e animação principal */
+        .logo-container {
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .logo-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: #FF6B00;
+            letter-spacing: 1px;
+        }
+        
+        /* Anel giratório */
+        .ring {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 3px solid transparent;
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Texto de carregamento */
+        .loading-text {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .loading-subtext {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            max-width: 300px;
+            line-height: 1.5;
+        }
+        
+        /* Barra de progresso */
+        .progress-container {
+            width: 280px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: white;
+            border-radius: 10px;
+            animation: progress 2.5s ease-in-out infinite;
+        }
+        
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; }
+        }
+        
+        /* Indicadores de status */
+        .status-indicators {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            animation: dotPulse 1.5s infinite ease-in-out;
+        }
+        
+        .status-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .status-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+        
+        /* Rodapé */
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+        
+        iframe.loaded {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
-  <!-- Tela de carregamento -->
-  <div class="loading-screen" id="loadingScreen">
-    <div class="logo-container">
-      <div class="logo-big">BIG</div>
-      <div class="logo-teclogica">Teclogica</div>
-    </div>
-    <div class="loading-animation">
-      <div class="loading-circle"></div>
-    </div>
-    <div class="loading-dots">
-      <div class="loading-dot"></div>
-      <div class="loading-dot"></div>
-      <div class="loading-dot"></div>
-    </div>
-  </div>
-
-  <!-- Conteúdo principal -->
-  <div class="container" id="mainContainer">
-    <div class="header">
-      <h1>BIG - Sistema Teclogica</h1>
-      <p>Sistema Integrado de Gestão e Automação</p>
+    <div class="loading-container" id="loading">
+        <!-- Partículas de fundo -->
+        <div class="particles" id="particles"></div>
+        
+        <!-- Logo e animação principal -->
+        <div class="logo-container">
+            <div class="logo-circle">
+                <div class="logo-text">BIG</div>
+                <div class="ring"></div>
+            </div>
+        </div>
+        
+        <!-- Textos -->
+        <div class="loading-text">Big Compra</div>
+        <div class="loading-subtext">Sistema de Gestão de Reservas</div>
+        
+        <!-- Barra de progresso -->
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        
+        <!-- Indicadores de status -->
+        <div class="status-indicators">
+            <div class="status-dot"></div>
+            <div class="status-dot"></div>
+            <div class="status-dot"></div>
+        </div>
+        
+        <!-- Rodapé -->
+        <div class="footer">Carregando recursos...</div>
     </div>
     
-    <div class="status-container">
-      <p><span class="status-label">Status do Sistema:</span> <span id="status">Verificando conexão...</span></p>
-      <p id="statusMessage" style="margin-top: 10px; color: #666;">Conectando ao servidor...</p>
-    </div>
-    
-    <div class="content-card">
-      <h2>Bem-vindo ao BIG Teclogica</h2>
-      <p>Este é um web app desenvolvido com Google Apps Script e integrado com uma interface moderna para gestão e automação de processos.</p>
-      <p>O sistema está carregando os dados necessários para funcionamento. Aguarde alguns instantes enquanto verificamos a conexão com o servidor.</p>
-      
-      <div class="info-grid">
-        <div class="info-item">
-          <h3>🔄 Status</h3>
-          <p>Sistema em operação normal</p>
-        </div>
-        <div class="info-item">
-          <h3>⚡ Performance</h3>
-          <p>Otimizado para alta velocidade</p>
-        </div>
-        <div class="info-item">
-          <h3>🔒 Segurança</h3>
-          <p>Dados protegidos e criptografados</p>
-        </div>
-      </div>
-    </div>
+    <iframe 
+        src="https://script.google.com/macros/s/AKfycby-BUDhpZlSzeO8C2lHZZ6qCakJY5oY6OQxwU9jR0C_GdGx0t6Dx1J7nEYYIK7aqZtojw/exec"
+        id="appFrame"
+        allow="camera; microphone; fullscreen"
+        onload="frameLoaded()">
+    </iframe>
 
-    <div class="footer">
-      <p>© 2024 BIG Teclogica. Todos os direitos reservados.</p>
-    </div>
-  </div>
-
-  <script>
-    // Simular tempo de carregamento e depois esconder a tela de carregamento
-    window.addEventListener('load', function() {
-      // Simular um tempo de carregamento (2 segundos)
-      setTimeout(function() {
-        document.getElementById('loadingScreen').classList.add('hidden');
-        document.getElementById('mainContainer').classList.add('visible');
-        
-        // Testar conexão com o Web App
-        const webAppUrl = 'https://script.google.com/macros/s/AKfycby-BUDhpZlSzeO8C2lHZZ6qCakJY5oY6OQxwU9jR0C_GdGx0t6Dx1J7nEYYIK7aqZtojw/exec';
-        
-        fetch(webAppUrl)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Erro na resposta do servidor: ' + response.status);
-            }
-            return response.json();
-          })
-          .then(data => {
-            const statusElement = document.getElementById('status');
-            const statusMessage = document.getElementById('statusMessage');
+    <script>
+        // Criar partículas dinamicamente
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 15;
             
-            if (data.status === 'success') {
-              statusElement.textContent = '✅ Conectado com sucesso!';
-              statusElement.classList.add('connected');
-              statusMessage.textContent = 'Sistema operacional - ' + data.message + ' | Última verificação: ' + new Date().toLocaleTimeString();
-            } else {
-              statusElement.textContent = '⚠️ Erro no sistema';
-              statusElement.classList.add('error');
-              statusMessage.textContent = 'Detalhes: ' + data.message;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Tamanho aleatório
+                const size = Math.random() * 20 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Posição aleatória
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Atraso de animação aleatório
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                particlesContainer.appendChild(particle);
             }
-          })
-          .catch(error => {
-            const statusElement = document.getElementById('status');
-            const statusMessage = document.getElementById('statusMessage');
+        }
+        
+        // Simular progresso de carregamento
+        function simulateProgress() {
+            const progressBar = document.querySelector('.progress-bar');
+            const footer = document.querySelector('.footer');
+            const steps = [
+                "Inicializando sistema...",
+                "Carregando módulos...", 
+                "Conectando ao servidor...",
+                "Preparando interface...",
+                "Quase pronto..."
+            ];
             
-            statusElement.textContent = '❌ Erro de conexão';
-            statusElement.classList.add('error');
-            statusMessage.textContent = 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente. Erro: ' + error.message;
-            console.error('Erro detalhado:', error);
-          });
-      }, 2000);
-    });
-
-    // Adicionar efeito de carregamento contínuo
-    setInterval(() => {
-      const statusElement = document.getElementById('status');
-      if (statusElement.textContent.includes('Verificando')) {
-        const dots = ['', '.', '..', '...'];
-        let count = 0;
-        setInterval(() => {
-          statusElement.textContent = 'Verificando conexão' + dots[count % dots.length];
-          count++;
-        }, 500);
-      }
-    }, 100);
-  </script>
+            let step = 0;
+            const interval = setInterval(() => {
+                if (step < steps.length) {
+                    footer.textContent = steps[step];
+                    step++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 500);
+        }
+        
+        function frameLoaded() {
+            const loading = document.getElementById('loading');
+            const iframe = document.getElementById('appFrame');
+            
+            setTimeout(() => {
+                loading.style.display = 'none';
+                iframe.classList.add('loaded');
+            }, 1500);
+        }
+        
+        // Inicializar quando a página carregar
+        window.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            simulateProgress();
+        });
+        
+        // Service Worker registration for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
