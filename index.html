@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <title>Meu Web App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Meu Web App Google Apps Script</h1>
+    <p>Status: <span id="status">Carregando...</span></p>
+    
+    <div id="content">
+      <!-- Conteúdo dinâmico -->
+    </div>
+  </div>
+
+  <script>
+    // Testar conexão com o Web App
+    fetch('https://script.google.com/macros/s/AKfycbynLqaLEoxXk8kriKbFtHAXWUjK_2H6pvSf1whm8ZIE8C5hBs3GeMr8EZwKr_FLBThaXg/exec')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('status').textContent = 
+          data.status === 'success' ? 'Conectado' : 'Erro: ' + data.message;
+      })
+      .catch(error => {
+        document.getElementById('status').textContent = 'Erro de conexão';
+        console.error('Erro:', error);
+      });
+  </script>
+</body>
+</html>
