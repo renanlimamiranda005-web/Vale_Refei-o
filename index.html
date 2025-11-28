@@ -1,41 +1,245 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
   <base target="_top">
-  <title>Meu Web App</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIG Teclogica</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    /* Tela de carregamento */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #ff7b00, #ff5500);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+    
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .logo-container {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .logo-big {
+      font-size: 5rem;
+      font-weight: 900;
+      color: white;
+      text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+    
+    .logo-teclogica {
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: white;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+    }
+    
+    .loading-animation {
+      width: 80px;
+      height: 80px;
+      position: relative;
+    }
+    
+    .loading-circle {
+      width: 100%;
+      height: 100%;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-top: 5px solid white;
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+    }
+    
+    .loading-dots {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    
+    .loading-dot {
+      width: 12px;
+      height: 12px;
+      background-color: white;
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    .loading-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    .loading-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.7; }
+    }
+    
+    /* Conteúdo principal */
     .container {
       max-width: 800px;
       margin: 0 auto;
+      padding: 30px 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    
+    .container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    h1 {
+      color: #ff7b00;
+      margin-bottom: 20px;
+      font-size: 2.2rem;
+      border-bottom: 2px solid #ff7b00;
+      padding-bottom: 10px;
+    }
+    
+    .status-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 25px;
+    }
+    
+    .status-label {
+      font-weight: 600;
+      color: #555;
+    }
+    
+    #status {
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background-color: #f0f0f0;
+    }
+    
+    #status.connected {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+    
+    #status.error {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+    
+    .content-card {
+      background-color: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .content-card h2 {
+      color: #ff7b00;
+      margin-bottom: 15px;
+    }
+    
+    .content-card p {
+      margin-bottom: 15px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- Tela de carregamento -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="logo-container">
+      <div class="logo-big">BIG</div>
+      <div class="logo-teclogica">Teclogica</div>
+    </div>
+    <div class="loading-animation">
+      <div class="loading-circle"></div>
+    </div>
+    <div class="loading-dots">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div class="container" id="mainContainer">
     <h1>Meu Web App Google Apps Script</h1>
-    <p>Status: <span id="status">Carregando...</span></p>
     
-    <div id="content">
-      <!-- Conteúdo dinâmico -->
+    <div class="status-container">
+      <p><span class="status-label">Status:</span> <span id="status">Carregando...</span></p>
+    </div>
+    
+    <div class="content-card" id="content">
+      <h2>Bem-vindo ao BIG Teclogica</h2>
+      <p>Este é um web app desenvolvido com Google Apps Script e integrado com uma interface moderna.</p>
+      <p>O sistema está carregando os dados necessários para funcionamento. Aguarde alguns instantes...</p>
     </div>
   </div>
 
   <script>
-    // Testar conexão com o Web App
-    fetch('https://script.google.com/macros/s/AKfycby-BUDhpZlSzeO8C2lHZZ6qCakJY5oY6OQxwU9jR0C_GdGx0t6Dx1J7nEYYIK7aqZtojw/exec')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('status').textContent = 
-          data.status === 'success' ? 'Conectado' : 'Erro: ' + data.message;
-      })
-      .catch(error => {
-        document.getElementById('status').textContent = 'Erro de conexão';
-        console.error('Erro:', error);
-      });
+    // Simular tempo de carregamento e depois esconder a tela de carregamento
+    window.addEventListener('load', function() {
+      // Simular um tempo de carregamento (3 segundos)
+      setTimeout(function() {
+        document.getElementById('loadingScreen').classList.add('hidden');
+        document.getElementById('mainContainer').classList.add('visible');
+        
+        // Testar conexão com o Web App
+        fetch('https://script.google.com/macros/s/AKfycby-BUDhpZlSzeO8C2lHZZ6qCakJY5oY6OQxwU9jR0C_GdGx0t6Dx1J7nEYYIK7aqZtojw/exec')
+          .then(response => response.json())
+          .then(data => {
+            const statusElement = document.getElementById('status');
+            if (data.status === 'success') {
+              statusElement.textContent = 'Conectado com sucesso!';
+              statusElement.classList.add('connected');
+            } else {
+              statusElement.textContent = 'Erro: ' + data.message;
+              statusElement.classList.add('error');
+            }
+          })
+          .catch(error => {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = 'Erro de conexão';
+            statusElement.classList.add('error');
+            console.error('Erro:', error);
+          });
+      }, 3000);
+    });
   </script>
 </body>
 </html>
