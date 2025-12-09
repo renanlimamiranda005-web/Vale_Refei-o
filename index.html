@@ -2,310 +2,580 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Big Compra - Sistema de Reservas</title>
-    <meta name="description" content="Sistema de gestão de reservas Big Compra">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#FF6B00">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Big Compra - Sistema de Vales</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="https://i.ibb.co/JRDdqmdw/logo.png">
+    
     <style>
-        html, body {
+        * {
             margin: 0;
             padding: 0;
-            height: 100%;
-            overflow: hidden;
-            background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-sizing: border-box;
         }
         
-        .loading-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        body {
+            background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 50%, #FF5500 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
             height: 100vh;
-            color: white;
-            text-align: center;
-            position: relative;
             overflow: hidden;
+            position: relative;
         }
         
-        /* Partículas de fundo */
+        /* Animação de partículas */
         .particles {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            z-index: 1;
         }
         
         .particle {
             position: absolute;
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            animation: float 6s infinite ease-in-out;
+            animation: float 15s infinite linear;
         }
         
         @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
         }
         
-        /* Logo e animação principal */
-        .logo-container {
-            margin-bottom: 40px;
+        /* Container principal */
+        .loading-container {
             position: relative;
-        }
-        
-        .logo-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: white;
+            z-index: 2;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            height: 100vh;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+        
+        /* Logo central */
+        .logo-center {
+            margin-bottom: 30px;
             position: relative;
-            animation: pulse 2s infinite;
         }
         
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .logo-img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+            animation: logoPulse 3s infinite ease-in-out;
         }
         
-        .logo-text {
-            font-size: 24px;
-            font-weight: 800;
-            color: #FF6B00;
-            letter-spacing: 1px;
+        @keyframes logoPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
         }
         
-        /* Anel giratório */
-        .ring {
+        .logo-glow {
             position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border: 3px solid transparent;
-            border-top: 3px solid white;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
             border-radius: 50%;
-            animation: spin 1.5s linear infinite;
+            z-index: -1;
+            animation: glowPulse 2s infinite alternate;
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes glowPulse {
+            0% {
+                opacity: 0.3;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            100% {
+                opacity: 0.6;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
         }
         
-        /* Texto de carregamento */
-        .loading-text {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        /* Textos */
+        .loading-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, #FFFFFF, #FFE0B2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
-        .loading-subtext {
-            font-size: 16px;
+        .loading-subtitle {
+            font-size: 1.2rem;
             opacity: 0.9;
             margin-bottom: 40px;
-            max-width: 300px;
+            max-width: 400px;
             line-height: 1.5;
+            font-weight: 300;
         }
         
-        /* Barra de progresso */
-        .progress-container {
-            width: 280px;
+        /* Indicador de progresso moderno */
+        .progress-track {
+            width: 320px;
             height: 6px;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             overflow: hidden;
+            margin-bottom: 40px;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #FFFFFF, #FFE0B2);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.6), 
+                transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(200%);
+            }
+        }
+        
+        /* Status indicators */
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
             margin-bottom: 30px;
         }
         
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: white;
-            border-radius: 10px;
-            animation: progress 2.5s ease-in-out infinite;
-        }
-        
-        @keyframes progress {
-            0% { width: 0%; }
-            50% { width: 100%; }
-            100% { width: 0%; }
-        }
-        
-        /* Indicadores de status */
-        .status-indicators {
+        .status-item {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.5s forwards;
         }
         
-        .status-dot {
-            width: 10px;
-            height: 10px;
+        .status-item:nth-child(1) { animation-delay: 0.3s; }
+        .status-item:nth-child(2) { animation-delay: 0.6s; }
+        .status-item:nth-child(3) { animation-delay: 0.9s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .status-check {
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            animation: dotPulse 1.5s infinite ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
         
-        .status-dot:nth-child(2) {
-            animation-delay: 0.2s;
+        .status-check.complete {
+            background: #4CAF50;
         }
         
-        .status-dot:nth-child(3) {
-            animation-delay: 0.4s;
+        .status-check.complete::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
         }
         
-        @keyframes dotPulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.3); opacity: 1; }
+        .status-text {
+            font-size: 14px;
+            font-weight: 500;
         }
         
-        /* Rodapé */
-        .footer {
-            position: absolute;
-            bottom: 20px;
+        /* Contador */
+        .counter {
             font-size: 14px;
             opacity: 0.8;
+            margin-top: 20px;
+            font-weight: 500;
         }
         
+        /* Mensagem de aviso */
+        .warning-message {
+            position: absolute;
+            bottom: 20px;
+            font-size: 12px;
+            opacity: 0.7;
+            max-width: 500px;
+            text-align: center;
+            padding: 0 20px;
+        }
+        
+        /* Iframe do app */
         iframe {
-            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            border: none;
+            z-index: 100;
             opacity: 0;
-            transition: opacity 0.5s ease-in;
+            transition: opacity 0.5s ease;
         }
         
         iframe.loaded {
             opacity: 1;
         }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .loading-title {
+                font-size: 2.2rem;
+            }
+            
+            .loading-subtitle {
+                font-size: 1rem;
+                max-width: 300px;
+            }
+            
+            .progress-track {
+                width: 280px;
+            }
+            
+            .logo-img {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .logo-glow {
+                width: 150px;
+                height: 150px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .loading-title {
+                font-size: 1.8rem;
+            }
+            
+            .progress-track {
+                width: 250px;
+            }
+        }
+        
+        /* Animação de entrada */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .loading-container > * {
+            animation: slideIn 0.8s ease-out forwards;
+        }
+        
+        .loading-container > *:nth-child(1) { animation-delay: 0.1s; }
+        .loading-container > *:nth-child(2) { animation-delay: 0.2s; }
+        .loading-container > *:nth-child(3) { animation-delay: 0.3s; }
+        .loading-container > *:nth-child(4) { animation-delay: 0.4s; }
     </style>
 </head>
 <body>
-    <div class="loading-container" id="loading">
-        <!-- Partículas de fundo -->
-        <div class="particles" id="particles"></div>
+    <!-- Partículas de fundo -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Tela de carregamento -->
+    <div class="loading-container" id="loadingScreen">
+        <!-- Logo -->
+        <div class="logo-center">
+            <div class="logo-glow"></div>
+            <img src="https://i.ibb.co/JRDdqmdw/logo.png" alt="Big Compra Logo" class="logo-img" onerror="this.onerror=null; this.src='https://via.placeholder.com/150/FF6B00/FFFFFF?text=BIG'">
+        </div>
         
-        <!-- Logo e animação principal -->
-        <div class="logo-container">
-            <div class="logo-circle">
-                <div class="logo-text">BIG</div>
-                <div class="ring"></div>
+        <!-- Título -->
+        <h1 class="loading-title">BIG COMPRA</h1>
+        
+        <!-- Subtítulo -->
+        <p class="loading-subtitle">Sistema de Vales-Refeição</p>
+        
+        <!-- Barra de progresso -->
+        <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <!-- Status de carregamento -->
+        <div class="status-container">
+            <div class="status-item" id="status1">
+                <div class="status-check"></div>
+                <span class="status-text">Inicializando sistema</span>
+            </div>
+            <div class="status-item" id="status2">
+                <div class="status-check"></div>
+                <span class="status-text">Carregando dados</span>
+            </div>
+            <div class="status-item" id="status3">
+                <div class="status-check"></div>
+                <span class="status-text">Conectando ao servidor</span>
             </div>
         </div>
         
-        <!-- Textos -->
-        <div class="loading-text">Big Compra</div>
-        <div class="loading-subtext">Sistema de Gestão de Reservas</div>
+        <!-- Contador -->
+        <div class="counter" id="counter">0%</div>
         
-        <!-- Barra de progresso -->
-        <div class="progress-container">
-            <div class="progress-bar"></div>
+        <!-- Aviso -->
+        <div class="warning-message">
+            Sistema otimizado para dispositivos móveis e desktop • Versão 4.7
         </div>
-        
-        <!-- Indicadores de status -->
-        <div class="status-indicators">
-            <div class="status-dot"></div>
-            <div class="status-dot"></div>
-            <div class="status-dot"></div>
-        </div>
-        
-        <!-- Rodapé -->
-        <div class="footer">Carregando recursos...</div>
     </div>
     
+    <!-- Iframe com a aplicação principal -->
     <iframe 
-        src="https://script.google.com/macros/s/AKfycbwuegvVirs-aqEyAft__oMBe2We-OUYCZ4CaxcM2g1qRlQKvOGOsGqM7d9XKGAftqlSNw/exec"
         id="appFrame"
-        allow="camera; microphone; fullscreen"
+        src="https://script.google.com/macros/s/AKfycbyE5u6Ai3CA9Thooy_HiSdNM-LdfBOvNTnL_VMW1JNbkqF5jn1LHFJsvihFej0JAJnNrw/exec"
+        allow="clipboard-write; clipboard-read"
+        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
         onload="frameLoaded()">
     </iframe>
 
     <script>
-        // Criar partículas dinamicamente
+        // URL do Google Apps Script Web App
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyE5u6Ai3CA9Thooy_HiSdNM-LdfBOvNTnL_VMW1JNbkqF5jn1LHFJsvihFej0JAJnNrw/exec";
+        
+        // Elementos DOM
+        const loadingScreen = document.getElementById('loadingScreen');
+        const appFrame = document.getElementById('appFrame');
+        const progressFill = document.getElementById('progressFill');
+        const counter = document.getElementById('counter');
+        const statusItems = [
+            document.getElementById('status1'),
+            document.getElementById('status2'),
+            document.getElementById('status3')
+        ];
+        
+        // Criar partículas de fundo
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
-            const particleCount = 15;
+            const particleCount = 20;
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
-                particle.classList.add('particle');
+                particle.className = 'particle';
                 
                 // Tamanho aleatório
-                const size = Math.random() * 20 + 5;
+                const size = Math.random() * 15 + 5;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 
-                // Posição aleatória
+                // Posição inicial aleatória
                 particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100 + 100}%`;
                 
-                // Atraso de animação aleatório
-                particle.style.animationDelay = `${Math.random() * 5}s`;
+                // Duração e delay da animação
+                const duration = Math.random() * 20 + 15;
+                const delay = Math.random() * 10;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                // Opacidade aleatória
+                particle.style.opacity = Math.random() * 0.2 + 0.05;
                 
                 particlesContainer.appendChild(particle);
             }
         }
         
         // Simular progresso de carregamento
-        function simulateProgress() {
-            const progressBar = document.querySelector('.progress-bar');
-            const footer = document.querySelector('.footer');
+        function simulateLoading() {
+            let progress = 0;
+            let step = 0;
+            
             const steps = [
-                "Inicializando sistema...",
-                "Carregando módulos...", 
-                "Conectando ao servidor...",
-                "Preparando interface...",
-                "Quase pronto..."
+                { percent: 30, text: "30%", statusIndex: 0, message: "Inicializando sistema" },
+                { percent: 60, text: "60%", statusIndex: 1, message: "Carregando dados" },
+                { percent: 90, text: "90%", statusIndex: 2, message: "Conectando ao servidor" },
+                { percent: 100, text: "100%", message: "Pronto!" }
             ];
             
-            let step = 0;
             const interval = setInterval(() => {
-                if (step < steps.length) {
-                    footer.textContent = steps[step];
+                // Incremento mais rápido no início, mais lento no final
+                const increment = progress < 70 ? 4 : 1.5;
+                progress = Math.min(progress + increment, 100);
+                
+                // Atualizar barra de progresso e contador
+                progressFill.style.width = `${progress}%`;
+                counter.textContent = `${Math.round(progress)}%`;
+                
+                // Verificar se atingiu algum step
+                if (step < steps.length && progress >= steps[step].percent) {
+                    // Atualizar status visual
+                    if (steps[step].statusIndex !== undefined) {
+                        const statusCheck = statusItems[steps[step].statusIndex].querySelector('.status-check');
+                        statusCheck.classList.add('complete');
+                    }
+                    
+                    // Atualizar mensagem
+                    if (steps[step].message) {
+                        counter.textContent = steps[step].message;
+                    }
+                    
                     step++;
-                } else {
-                    clearInterval(interval);
                 }
-            }, 500);
+                
+                // Finalizar quando chegar a 100%
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // Pequeno delay antes de mostrar o app
+                    setTimeout(() => {
+                        counter.textContent = "Redirecionando...";
+                    }, 500);
+                }
+            }, 100);
         }
         
+        // Quando o iframe carregar
         function frameLoaded() {
-            const loading = document.getElementById('loading');
-            const iframe = document.getElementById('appFrame');
+            console.log("Aplicação principal carregada");
             
+            // Pequeno delay para mostrar a transição
             setTimeout(() => {
-                loading.style.display = 'none';
-                iframe.classList.add('loaded');
-            }, 1500);
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.pointerEvents = 'none';
+                appFrame.classList.add('loaded');
+                
+                // Remover a tela de loading depois da animação
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 1000);
+        }
+        
+        // Verificar se o iframe está acessível
+        function checkAppAvailability() {
+            console.log("Verificando disponibilidade do app...");
+            
+            // Tentar carregar o iframe
+            appFrame.src = WEB_APP_URL;
+            
+            // Timeout para caso o app não carregue
+            setTimeout(() => {
+                if (!appFrame.contentDocument || appFrame.contentDocument.readyState !== 'complete') {
+                    console.warn("App demorando para carregar, tentando novamente...");
+                    
+                    // Tentar recarregar
+                    setTimeout(() => {
+                        appFrame.src = WEB_APP_URL + '?t=' + Date.now();
+                    }, 2000);
+                }
+            }, 10000); // 10 segundos de timeout
+        }
+        
+        // Configurar Service Worker para PWA
+        function setupServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado com sucesso:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Falha ao registrar Service Worker:', error);
+                    });
+            }
         }
         
         // Inicializar quando a página carregar
         window.addEventListener('DOMContentLoaded', () => {
+            console.log("Iniciando sistema Big Compra...");
+            
+            // Criar partículas
             createParticles();
-            simulateProgress();
+            
+            // Iniciar animação de carregamento
+            simulateLoading();
+            
+            // Verificar disponibilidade do app
+            checkAppAvailability();
+            
+            // Configurar PWA
+            setupServiceWorker();
+            
+            // Adicionar suporte offline básico
+            window.addEventListener('online', () => {
+                console.log("Conexão restabelecida");
+                document.body.style.background = "linear-gradient(135deg, #FF6B00 0%, #FF8C00 50%, #FF5500 100%)";
+            });
+            
+            window.addEventListener('offline', () => {
+                console.log("Sem conexão");
+                document.body.style.background = "linear-gradient(135deg, #FF4500 0%, #FF6347 50%, #FF4500 100%)";
+                counter.textContent = "Sem conexão - Tentando reconectar...";
+            });
         });
         
-        // Service Worker registration for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then((registration) => {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch((registrationError) => {
-                        console.log('SW registration failed: ', registrationError);
-                    });
-            });
-        }
+        // Detectar erro no iframe
+        appFrame.addEventListener('error', () => {
+            console.error("Erro ao carregar o aplicativo");
+            counter.textContent = "Erro ao carregar. Tentando novamente...";
+            
+            // Tentar recarregar após 3 segundos
+            setTimeout(() => {
+                appFrame.src = WEB_APP_URL + '?retry=' + Date.now();
+            }, 3000);
+        });
     </script>
 </body>
 </html>
